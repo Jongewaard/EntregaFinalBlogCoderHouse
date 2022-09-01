@@ -1,0 +1,17 @@
+{% extends 'posts/base.html'%}
+
+{% block contenido%}
+<br><br><br>
+
+{% if error%}
+<div style="text-align:center">
+    <br><p>{{error}}</p><br>
+</div>
+{% endif %}
+<form method="post" style="margin: auto; width: 440px;">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value="Editar datos de usuario">
+
+</form>
+{% endblock %}

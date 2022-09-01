@@ -1,0 +1,25 @@
+{% extends 'posts/base.html'%}
+
+{% block contenido%}
+<br><br><br>
+
+{% if error%}
+<br><p>{{error}}</p><br>
+{% endif %}
+
+<form action="" method="POST" style="margin: auto; width: 550px;">
+    {% for post in post_lists %}
+    <p>{{post}}</p>
+    <button type="submit"> Modificar</button>
+    {% endfor%}
+
+
+
+</form>
+
+
+
+
+{% endblock%}
+
+
