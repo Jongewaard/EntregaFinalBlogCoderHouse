@@ -4,9 +4,11 @@ from django.shortcuts import render, redirect
 from posts.models import *
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login, logout, authenticate
-from posts.forms import UserCustomCreationForm, CustomAuthenticationForm, UserEditForm
+from posts.forms import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+
+
 
 # con @login_required se protege cualquier vista para ser necesario estar logueado
 # esto es para vistas basadas en funciones
@@ -76,5 +78,52 @@ def modificar_usuario(request):
         return redirect("home")
 
 def ver_post(request):
-    listado_posteos = Post.objects.all()
-    return render(request, "posts/posts.html", {"post_lists": listado_posteos})
+    if request.method == "GET":
+        listado_posteos = Post.objects.all()
+        listado_comentarios = Comentario.objects.all()
+        form = UserCommentPost()
+        contexto = {
+            "post_lists": listado_posteos,
+            "form": form,
+            "comments":listado_comentarios
+            }
+        return render(request, "posts/posts.html", contexto)
+    else:
+        form = UserCommentPost(request.POST)
+
+        # esto es una gronchada xd
+        try:
+            if request.POST["id_comentario_borrar"]:
+                Comentario.objects.filter(id=request.POST["id_comentario_borrar"]).update(comentario='--deleted--')
+            return redirect("ver_post")
+        except:
+            pass
+
+        if form.is_valid():
+            data = form.cleaned_data
+            instance = form.instance
+            instance.autor = request.user
+            instance.related_post = request.POST["id_post"]
+            instance.save()
+        return redirect("ver_post")
+
+
+
+@login_required
+def crear_post(request):
+    if request.method == "GET":
+        form = UserCreationPost()
+        #print(form)
+        return render(request, "posts/create_post.html", {"form":form} )
+    else:
+        form = UserCreationPost(request.POST)
+        print(f"request: {request}")
+        if form.is_valid():
+            instance = form.instance
+            instance.autor = request.user
+            instance.save()
+
+        return redirect("ver_post")
+
+
+

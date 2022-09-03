@@ -19,7 +19,7 @@
                     <a class="navbar-brand" href="{% url 'home' %}">Inicio</a>
                     {% if request.user.username %}
                     <a class="navbar-brand" href="{% url 'ver_post' %}">Posts</a>
-                    <a class="navbar-brand" href="{% url 'home' %}">Crear</a>
+                    <a class="navbar-brand" href="{% url 'crear_post' %}">Crear</a>
                     <a class="navbar-brand" href="{% url 'home' %}">Buscar</a>
                     {% endif %}
                     <div class="collapse navbar-collapse" id="navbarResponsive">

@@ -2,7 +2,15 @@ from ast import Pass
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms import *
+from posts.models import Post, Comentario
 
+from django.db import models
+from django.contrib.auth.models import User
+
+STATUS = (
+    (0,"Proyecto"),
+    (1,"Publicado")
+)
 class UserCustomCreationForm(UserCreationForm):
     username = CharField(label="Usuario")
     email = EmailField()
@@ -30,3 +38,15 @@ class UserEditForm(UserCreationForm):
         model = User
         fields = ["email", "password1", "password2"]
         help_texts = {k:"" for k in fields}
+
+class UserCreationPost(ModelForm):
+    class Meta:
+        model = Post
+        fields = ["autor", "titulo", "contenido", "estado", "slug"]
+        exclude = ['autor']
+
+class UserCommentPost(ModelForm):
+    class Meta:
+        model = Comentario
+        fields = ["autor","comentario", "related_post"]
+        exclude = ["autor", "related_post"]

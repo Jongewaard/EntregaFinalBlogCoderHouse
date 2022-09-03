@@ -2,21 +2,68 @@
 
 {% block contenido%}
 <br><br><br>
-
+<style>
+    h1 {text-align: center;}
+    h2 {text-align: center;}
+    h3 {text-align: center;}
+    h4 {text-align: center;}
+    h5 {text-align: center;}
+    p {text-align: center;}
+    form {text-align: center;}
+    div {text-align: center;}
+    hr {
+    margin-left: auto;
+    margin-right: auto;
+    }
+    </style>
 {% if error%}
 <br><p>{{error}}</p><br>
 {% endif %}
+<!-- por cada post creado -->
+{% for post in post_lists %}
 
-<form action="" method="POST" style="margin: auto; width: 550px;">
-    {% for post in post_lists %}
-    <p>{{post}}</p>
-    <button type="submit"> Modificar</button>
+    <h2>{{post}}</h2>
+    <p>{{post.autor}} escribió // {{post.f_creacion}}</p>
+    <h5>{{post.contenido}}</h5>
+    <!-- imprimo los comentarios -->
+    <hr width="38%">
+    {% for comment in comments %}
+        {% if comment.related_post == post.id%}
+        <form method="POST">
+        <p>&emsp;&emsp;{{comment}}
+            {% if comment.autor.username == request.user.username %}
+                {% csrf_token %}
+                <input type="hidden" name = "id_comentario_borrar" value={{comment.id}} >
+                <input type="submit" value="Borrar"></p>
+            {% endif %}
+        </form>
+
+        {% endif %}
     {% endfor%}
 
+<form method="POST">
+    {% csrf_token %}
+    <!-- me guardo el id del usuario y el nombre (no es delicado pero funciona)  style="margin: auto; width: 550px;" -->
+    <input type="hidden" name="id_post" value= {{post.id}} >
+    <input type="hidden" name="autor" value= {{post.autor}} >
+    <!-- imprimo el post -->
 
+    {{form.as_p}}
+    <button type="submit">Enviar</button>
+</form>
+<!-- si el usuario logueado es el creador del post, podra ver el botón de editar post -->
+{% if post.autor.username == request.user.username %}
+<form action="" method="POST">
+    {% csrf_token %}
+
+    <input type="hidden" name="id_post" value= {{post.id}} >
+    <button type="submit">Editar post</button>
 
 </form>
-
+{% endif %}
+<br>
+<hr>
+{% endfor%}
 
 
 

@@ -1,0 +1,19 @@
+{% extends 'posts/base.html'%}
+
+{% block contenido%}
+<br><br><br>
+
+{% if error%}
+<br><p>{{error}}</p><br>
+{% endif %}
+
+<form action="" method="POST" style="margin: auto; width: 550px;">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit"> Crear Post</button>
+</form>
+
+
+
+{% endblock%}
+
