@@ -7,7 +7,7 @@ from django.contrib.auth import login, logout, authenticate
 from posts.forms import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.models import User
 
 
 # con @login_required se protege cualquier vista para ser necesario estar logueado
@@ -19,8 +19,17 @@ from django.contrib.auth.decorators import login_required
 
 
 def index(request):
-    listado_posteos = Post.objects.all()
-    return render(request, "posts/index.html", {"post_lists": listado_posteos})
+    try:
+        avatar = Avatar.objects.filter(user=request.user).first()
+    except:
+        pass # nomas para evitar el error de que haya un usuario sin imagen, o si entran sin loguearse
+    try:# Podría capturar mas elegantemente el error, pero esta gronchada funciona xd
+        dict_avatar = {"imagen":avatar.imagen.url}
+    except:
+        dict_avatar = {"imagen":""}
+    contexto = {}
+    contexto.update(dict_avatar)
+    return render(request, "posts/index.html", contexto)
 
 
 def auth_login(request):
@@ -32,7 +41,7 @@ def auth_login(request):
             user = authenticate(username=usuario, password=contrasenia)
             if user is not None:
                 login(request, user)
-                return render(request,"posts/index.html")#login exitoso
+                return redirect("home")#login exitoso
             else:
                 contexto = {
                     'error':'Error, formulario inválido',
@@ -55,7 +64,6 @@ def register(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             form.save()
-            #return redirect('home')
             return render(request,"posts/index.html")#Usuario creado
     else:
         form = UserCustomCreationForm()
@@ -64,9 +72,34 @@ def register(request):
 @login_required
 def modificar_usuario(request):
     if request.method == "GET":
+        avatar = Avatar.objects.filter(user=request.user).first()
+        try:# Podría capturar mas elegantemente el error, pero esta gronchada funciona xd
+            dict_avatar = {"imagen":avatar.imagen.url}
+        except:
+            dict_avatar = {"imagen":""}
         form = UserEditForm(initial={"email":request.user.email})
-        return render(request, 'posts/user_update.html',{"form":form})
+        img_form = AvatarForm()
+        contexto = {
+            "form":form,
+            "image_form":img_form
+        }
+        contexto.update(dict_avatar)
+        return render(request, 'posts/user_update.html',contexto)
     else:
+
+        try:
+            if request.POST["cargando_imagen"]:
+                form = AvatarForm(request.POST, request.FILES)
+                if form.is_valid():
+                    print(f"el formulario es valido!")
+                    data = form.cleaned_data
+                    usuario = User.objects.filter(username=request.user.username).first()
+                    avatar = Avatar(user=usuario,imagen=data["imagen"])
+                    Avatar.objects.filter(user=request.user).delete()
+                    avatar.save()
+                return redirect("ver_post")
+        except:
+            pass
         form = UserEditForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
@@ -79,14 +112,31 @@ def modificar_usuario(request):
 
 def ver_post(request):
     if request.method == "GET":
+        try:
+            avatar = Avatar.objects.filter(user=request.user).first()
+            #avatar = Avatar.objects.filter(user=request.user).order_by('-id')
+        except:
+            pass # esto es para evitar un crash si no hay usuario logueado
+        avatares = Avatar.objects.all()
         listado_posteos = Post.objects.all()
         listado_comentarios = Comentario.objects.all()
         form = UserCommentPost()
+        try:# Podría capturar mas elegantemente el error, pero esta gronchada funciona xd
+            dict_avatar = {"imagen":avatar.imagen.url}
+        except:
+            dict_avatar = {"imagen":""}
+        try:
+            dict_avatares = {"imagenes":avatares}
+        except:
+            dict_avatares = {"imagenes":""}
         contexto = {
             "post_lists": listado_posteos,
             "form": form,
             "comments":listado_comentarios
             }
+        contexto.update(dict_avatar)
+        contexto.update(dict_avatares)
+        print(f"contexto {contexto}")
         return render(request, "posts/posts.html", contexto)
     else:
         form = UserCommentPost(request.POST)
@@ -113,17 +163,35 @@ def ver_post(request):
 def crear_post(request):
     if request.method == "GET":
         form = UserCreationPost()
-        #print(form)
         return render(request, "posts/create_post.html", {"form":form} )
     else:
         form = UserCreationPost(request.POST)
-        print(f"request: {request}")
         if form.is_valid():
             instance = form.instance
             instance.autor = request.user
             instance.save()
 
         return redirect("ver_post")
+
+
+@login_required
+def edit_post(request):
+    if request.method == "GET":
+        posteo_a_editar = Post.objects.filter(id=request.GET.get("id_post")).values()
+        dict_of_initial = {
+            "titulo":posteo_a_editar[0]["titulo"],
+            "contenido":posteo_a_editar[0]["contenido"],
+            "estado":posteo_a_editar[0]["estado"],
+            "slug":posteo_a_editar[0]["slug"],
+        }
+        form = UserCreationPost(initial=dict_of_initial)
+        return render(request, "posts/edit_post.html", {"form":form, "id_post_mod": request.GET.get("id_post") } )
+    else:
+        posteo_a_editar = Post.objects.filter(id=request.GET.get("id_post")).values()
+        Post.objects.filter(id=request.POST["id_post"]).update(titulo=request.POST["titulo"],contenido=request.POST["contenido"],estado=request.POST["estado"])
+
+        return redirect("ver_post")
+
 
 
 

@@ -1,4 +1,5 @@
 from ast import Pass
+from tkinter import Image
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms import *
@@ -50,3 +51,6 @@ class UserCommentPost(ModelForm):
         model = Comentario
         fields = ["autor","comentario", "related_post"]
         exclude = ["autor", "related_post"]
+
+class AvatarForm(Form):
+    imagen = ImageField()

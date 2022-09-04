@@ -10,14 +10,12 @@
 
 <form action="" method="POST" style="margin: auto; width: 550px;">
     {% csrf_token %}
+    <input type="hidden" name="id_post" value= {{id_post_mod}} >
     {{form.as_p}}
-
-    <button type="submit"> Registrarse</button>
+    <button type="submit"> Guardar Post modificado</button>
 </form>
 
 
 
-
 {% endblock%}
-
 

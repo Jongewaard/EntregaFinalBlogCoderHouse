@@ -17,8 +17,8 @@
             <nav class="navbar navbar-expand-lg bg-black text-black-50 text-uppercase fixed-top" >
                 <div class="container px-4 px-lg-5">
                     <a class="navbar-brand" href="{% url 'home' %}">Inicio</a>
-                    {% if request.user.username %}
                     <a class="navbar-brand" href="{% url 'ver_post' %}">Posts</a>
+                    {% if request.user.username %}
                     <a class="navbar-brand" href="{% url 'crear_post' %}">Crear</a>
                     <a class="navbar-brand" href="{% url 'home' %}">Buscar</a>
                     {% endif %}
@@ -31,8 +31,10 @@
                             <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Ingresar</a></li>
                             {% endif %}
                             <li class="nav-item"><a class="nav-link" href="">About</a></li>
-
                         </ul>
+                            {% if request.user.username %} <!-- si está logueado, muestra el menu y para salir-->
+                            <li class="nav-item"><img src="{{imagen}}" alt="Avatar" width="50" height="40"></li>
+                            {% endif %}
                     </div>
                 </div>
             </nav>

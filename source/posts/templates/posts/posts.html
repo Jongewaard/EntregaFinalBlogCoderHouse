@@ -2,6 +2,7 @@
 
 {% block contenido%}
 <br><br><br>
+<br><br><br>
 <style>
     h1 {text-align: center;}
     h2 {text-align: center;}
@@ -15,54 +16,72 @@
     margin-left: auto;
     margin-right: auto;
     }
-    </style>
+</style>
 {% if error%}
 <br><p>{{error}}</p><br>
 {% endif %}
-<!-- por cada post creado -->
+<!-- por cada post creado, recorremos e imprimimos-->
 {% for post in post_lists %}
-
     <h2>{{post}}</h2>
-    <p>{{post.autor}} escribió // {{post.f_creacion}}</p>
+    <p>
+    <!-- Agregamos la imagen avatar si la tiene para el usuario -->
+    {% for image in imagenes %}
+        {% if post.autor.username == image.user.username %}
+            <img src="{{image.imagen.url}}" alt="Image" width="50" height="40">
+        {% endif %}
+    {% endfor%}
+    <!-- Mostramos al autor y la fecha de creación -->
+    {{post.autor}} escribió // {{post.f_creacion}}
+    </p>
+    <!-- Y su contenido -->
     <h5>{{post.contenido}}</h5>
     <!-- imprimo los comentarios -->
     <hr width="38%">
-    {% for comment in comments %}
-        {% if comment.related_post == post.id%}
-        <form method="POST">
-        <p>&emsp;&emsp;{{comment}}
-            {% if comment.autor.username == request.user.username %}
-                {% csrf_token %}
-                <input type="hidden" name = "id_comentario_borrar" value={{comment.id}} >
-                <input type="submit" value="Borrar"></p>
+        <!-- recorremos los comentarios -->
+        {% for comment in comments %}
+            <!-- si hay un comentario relacionado con el post, lo imprimimos -->
+            {% if comment.related_post == post.id%}
+            <form method="POST">
+            <p>
+            <!-- Lo mismo que el user del post, para el user del comentarista, ponemos su avatar -->
+            {% for image in imagenes %}
+                {% if comment.autor.username == image.user.username %}
+                    <img src="{{image.imagen.url}}" alt="Image" width="30" height="20">
+                {% endif %}
+            {% endfor%}
+            <!-- y su comentario -->
+            {{comment}}
+                <!-- Si el usuario en cuestión está logueado, verá un botón de eliminar comentario (que no lo eliminará, dejará un mensaje de 'borrado') -->
+                {% if comment.autor.username == request.user.username and not comment.comentario == "--deleted--" %}
+                    {% csrf_token %}
+                    <input type="hidden" name = "id_comentario_borrar" value={{comment.id}} >
+                    <input type="submit" value="Borrar">
+                {% endif %}
+            </p>
+            </form>
+
             {% endif %}
-        </form>
-
-        {% endif %}
-    {% endfor%}
-
-<form method="POST">
-    {% csrf_token %}
-    <!-- me guardo el id del usuario y el nombre (no es delicado pero funciona)  style="margin: auto; width: 550px;" -->
-    <input type="hidden" name="id_post" value= {{post.id}} >
-    <input type="hidden" name="autor" value= {{post.autor}} >
-    <!-- imprimo el post -->
-
-    {{form.as_p}}
-    <button type="submit">Enviar</button>
-</form>
-<!-- si el usuario logueado es el creador del post, podra ver el botón de editar post -->
-{% if post.autor.username == request.user.username %}
-<form action="" method="POST">
-    {% csrf_token %}
-
-    <input type="hidden" name="id_post" value= {{post.id}} >
-    <button type="submit">Editar post</button>
-
-</form>
-{% endif %}
-<br>
-<hr>
+        {% endfor%}
+    <!-- Si el usuario está logueado podrá ver el formulario para comentar el post -->
+    {% if request.user.username %}
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="id_post" value= {{post.id}} >
+        <input type="hidden" name="autor" value= {{post.autor}} >
+        <!-- imprimo el post -->
+        {{form.as_p}}
+        <button type="submit">Enviar</button>
+    </form>
+    {% endif %}
+    <!-- si el usuario logueado es el creador del post, podra ver el botón de editar post -->
+    {% if post.autor.username == request.user.username %}
+    <form action="{% url 'editar_post' %}" method="GET">
+        <input type="hidden" name="id_post" value= {{post.id}} >
+        <button type="submit">Editar post</button>
+    </form>
+    {% endif %}
+    <br>
+    <hr>
 {% endfor%}
 
 

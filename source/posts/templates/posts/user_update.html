@@ -2,7 +2,7 @@
 
 {% block contenido%}
 <br><br><br>
-
+<br><br><br>
 {% if error%}
 <div style="text-align:center">
     <br><p>{{error}}</p><br>
@@ -12,6 +12,21 @@
     {% csrf_token %}
     {{form.as_p}}
     <input type="submit" value="Editar datos de usuario">
+</form>
+
+{% if request.user.username %} <!-- si está logueado, muestra el menu y para salir-->
+<br>
+
+<p style="text-align:center;"><label for="">Avatar actual:</label></p>
+<p style="text-align:center;"><img src="{{imagen}}" alt="Avatar" class="center"></p>
+<form action="" method="post" enctype="multipart/form-data" style="margin: auto; width: 440px;">
+    {% csrf_token %}
+    {{image_form.as_p}}
+    <input type="hidden" name = "cargando_imagen" value="True">
+    <input type="submit" value="Cargar imagen">
 
 </form>
+
+{% endif %}
+
 {% endblock %}
