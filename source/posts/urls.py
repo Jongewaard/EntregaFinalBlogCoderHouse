@@ -13,7 +13,8 @@ urlpatterns = [
     path("edit_user/", modificar_usuario, name='editar_usuario'),
     path("view_post/", ver_post, name='ver_post'),
     path("create_post/", crear_post, name='crear_post'),
-    path("edit_post/", edit_post, name='editar_post')
+    path("edit_post/", edit_post, name='editar_post'),
+    path("about/", ver_about, name='about')
 ]
 
 urlpatterns+= static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

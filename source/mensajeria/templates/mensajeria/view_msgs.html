@@ -44,13 +44,13 @@
             <tr>
                 <td></td>
                 <td>&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160</td>
-                <td ALIGN=RIGHT>{{msg.mensaje}} : {{request.user.username}}</td>
+                <td ALIGN=RIGHT>{{msg.mensaje}} : <b>{{request.user.username}}</b></td>
             </tr>
         {% endif %}
         <!-- Ordenandolos visualmente un poco coherente, destinatario a la izq y remitente a la derecha -->
         {% if msg.remitente == usr_remitente.username and msg.destinatario.username == request.user.username %}
             <tr>
-                <td> {{usr_remitente}} : {{msg.mensaje}} </td>
+                <td> <b>{{usr_remitente}}</b> : {{msg.mensaje}} </td>
                 <td>&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160</td>
                 <td></td>
             </tr>

@@ -180,6 +180,12 @@ def edit_post(request):
 
         return redirect("ver_post")
 
-
+def ver_about(request):
+    try:# Podría capturar mas elegantemente el error, pero esta gronchada funciona xd
+        avatar = Avatar.objects.filter(user=request.user).first()
+        contexto = {"imagen":avatar.imagen.url}
+    except:
+        contexto = {"imagen":""}
+    return render(request, "posts/about.html",contexto )
 
 
