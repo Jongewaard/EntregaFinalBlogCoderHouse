@@ -1,0 +1,73 @@
+{% extends 'posts/base.html'%}
+
+{% block contenido%}
+<style>
+    table, td, th {
+    border: 0px solid black;
+    }
+
+    table {
+    border-collapse: collapse;
+    width: 40%;
+    margin: 0px auto;
+    }
+
+
+    h1 {text-align: center;}
+    h2 {text-align: center;}
+    h3 {text-align: center;}
+    h4 {text-align: center;}
+    h5 {text-align: center;}
+    p {text-align: center;}
+    form {text-align: center;}
+    div {text-align: center;}
+    hr {
+    margin-left: auto;
+    margin-right: auto;
+
+
+
+    }
+</style>
+<br><br><br>
+<!-- Hacer click en ver chat nos traerá acá -->
+<table >
+    <tr><!-- Mostramos el usuario con el que tenemos un chat -->
+        <th>{{usr_remitente}}...</th>
+        <th></th>
+        <th></th>
+    </tr>
+<!-- Traemos los mensajes de la db y los imprimimos siempre que: -->
+{% for msg in mensajes %}
+        <!-- en el mensaje, el remitente y el destinatario coincidan con los usuarios en el chat (user logueado y el destinatario) -->
+        {% if msg.remitente == request.user.username and msg.destinatario == usr_remitente %}
+            <tr>
+                <td></td>
+                <td>&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160</td>
+                <td ALIGN=RIGHT>{{msg.mensaje}} : {{request.user.username}}</td>
+            </tr>
+        {% endif %}
+        <!-- Ordenandolos visualmente un poco coherente, destinatario a la izq y remitente a la derecha -->
+        {% if msg.remitente == usr_remitente.username and msg.destinatario.username == request.user.username %}
+            <tr>
+                <td> {{usr_remitente}} : {{msg.mensaje}} </td>
+                <td>&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160</td>
+                <td></td>
+            </tr>
+        {% endif %}
+{% endfor %}
+</table>
+
+<!-- luego va el formulario para el nuevo mensaje -->
+<br>
+<form action="" method="POST" style="margin: auto; width: 550px;">
+    {% csrf_token %}
+    {{form.as_p}}
+    <!-- Además del formulario con el mensaje para guardarlo, le pasamos también los usuarios para renderizar de nuevo la pág -->
+    <input type="hidden" name = "destinatario_id" value={{id_user_remitente}} >
+    <button type="submit"> Enviar</button>
+</form>
+<br>
+
+
+{% endblock %}

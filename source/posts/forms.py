@@ -1,17 +1,14 @@
-from ast import Pass
-from tkinter import Image
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms import *
 from posts.models import Post, Comentario
-
-from django.db import models
 from django.contrib.auth.models import User
 
 STATUS = (
     (0,"Proyecto"),
     (1,"Publicado")
 )
+
 class UserCustomCreationForm(UserCreationForm):
     username = CharField(label="Usuario")
     email = EmailField()

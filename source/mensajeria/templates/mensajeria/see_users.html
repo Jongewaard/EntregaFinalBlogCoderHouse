@@ -1,0 +1,32 @@
+{% extends 'posts/base.html'%}
+
+{% block contenido%}
+<br><br><br>
+<style>
+    h1 {text-align: center;}
+    h2 {text-align: center;}
+    h3 {text-align: center;}
+    h4 {text-align: center;}
+    h5 {text-align: center;}
+    p {text-align: center;}
+    form {text-align: center;}
+    div {text-align: center;}
+    hr {
+    margin-left: auto;
+    margin-right: auto;
+    }
+</style>
+<!-- Aca agregar un buscador de usuarios -->
+{% for user in users%}
+    <!-- Hacerlo clickeable para ABRIR EL CHAT -->
+    {% if not user.username == request.user.username%}
+    <form action="{% url 'ver_mensajes' %}" method="get">
+        <p>{{user}}
+            <input type="hidden" name = "chat_con" value={{user.id}} >
+            <input type="submit" value="Ver chat">
+        </p>
+    </form>
+    {% endif %}
+{% endfor %}
+
+{% endblock%}

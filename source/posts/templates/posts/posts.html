@@ -2,7 +2,6 @@
 
 {% block contenido%}
 <br><br><br>
-<br><br><br>
 <style>
     h1 {text-align: center;}
     h2 {text-align: center;}
@@ -20,19 +19,37 @@
 {% if error%}
 <br><p>{{error}}</p><br>
 {% endif %}
+<!-- busqueda -->
+<form action="" method="get">
+    {% if largo_busqueda %}
+    <label>coincidencia/s: {{largo_busqueda}}</label><br>
+    {% endif %}
+    <input type="text" id="cont_busqueda" name="cont_busqueda" value="{{busqueda_anterior}}">
+    <input type="submit" value="Buscar">
+</form>
+<br>
+<hr>
+
+<br><br>
+
+
+<!-- busqueda -->
 <!-- por cada post creado, recorremos e imprimimos-->
 {% for post in post_lists %}
+    <!-- titulo -->
     <h2>{{post}}</h2>
-    <p>
-    <!-- Agregamos la imagen avatar si la tiene para el usuario -->
-    {% for image in imagenes %}
-        {% if post.autor.username == image.user.username %}
-            <img src="{{image.imagen.url}}" alt="Image" width="50" height="40">
-        {% endif %}
-    {% endfor%}
-    <!-- Mostramos al autor y la fecha de creación -->
-    {{post.autor}} escribió // {{post.f_creacion}}
-    </p>
+    <h4>
+        <p>
+            <!-- Agregamos la imagen avatar si la tiene para el usuario -->
+            {% for image in imagenes %}
+                {% if post.autor.username == image.user.username %}
+                    <img src="{{image.imagen.url}}" alt="Image" width="50" height="40">
+                {% endif %}
+            {% endfor%}
+            <!-- Mostramos al autor y la fecha de creación -->
+            {{post.autor}} // {{post.f_creacion}}
+        </p>
+    </h4>
     <!-- Y su contenido -->
     <h5>{{post.contenido}}</h5>
     <!-- imprimo los comentarios -->

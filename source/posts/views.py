@@ -1,5 +1,3 @@
-from msilib.schema import ListView
-from turtle import isvisible
 from django.shortcuts import render, redirect
 from posts.models import *
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -8,14 +6,6 @@ from posts.forms import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
-
-# con @login_required se protege cualquier vista para ser necesario estar logueado
-# esto es para vistas basadas en funciones
-
-'''class Posteos(LoginRequiredMixin,ListView):
-    # @login_required es para vistas basadas en CLASES 1:38:30 video de la clase 23
-    pass'''
 
 
 def index(request):
@@ -30,7 +20,6 @@ def index(request):
     contexto = {}
     contexto.update(dict_avatar)
     return render(request, "posts/index.html", contexto)
-
 
 def auth_login(request):
     if request.method == "POST":
@@ -56,7 +45,6 @@ def auth_login(request):
             return render(request,"posts/login.html",contexto)#login con errores, o datos incorrectos
     form = CustomAuthenticationForm()
     return render(request, "posts/login.html",{'form':form} )
-
 
 def register(request):
     if request.method == 'POST':
@@ -111,24 +99,27 @@ def modificar_usuario(request):
         return redirect("home")
 
 def ver_post(request):
+    dict_of_search = {}
     if request.method == "GET":
         try:
             avatar = Avatar.objects.filter(user=request.user).first()
+            dict_avatar = {"imagen":avatar.imagen.url}
             #avatar = Avatar.objects.filter(user=request.user).order_by('-id')
         except:
-            pass # esto es para evitar un crash si no hay usuario logueado
+            dict_avatar = {"imagen":""} # esto es para evitar un crash si no hay usuario logueado
+
         avatares = Avatar.objects.all()
-        listado_posteos = Post.objects.all()
+        dict_avatares = {"imagenes":avatares}
+        try:
+            listado_posteos = Post.objects.filter(contenido__contains=request.GET.get('cont_busqueda'))
+            dict_of_search = {
+                "busqueda_anterior": request.GET.get('cont_busqueda'),
+                "largo_busqueda": len(listado_posteos)
+                }
+        except:
+            listado_posteos = Post.objects.all()
         listado_comentarios = Comentario.objects.all()
         form = UserCommentPost()
-        try:# Podría capturar mas elegantemente el error, pero esta gronchada funciona xd
-            dict_avatar = {"imagen":avatar.imagen.url}
-        except:
-            dict_avatar = {"imagen":""}
-        try:
-            dict_avatares = {"imagenes":avatares}
-        except:
-            dict_avatares = {"imagenes":""}
         contexto = {
             "post_lists": listado_posteos,
             "form": form,
@@ -136,7 +127,7 @@ def ver_post(request):
             }
         contexto.update(dict_avatar)
         contexto.update(dict_avatares)
-        print(f"contexto {contexto}")
+        contexto.update(dict_of_search)
         return render(request, "posts/posts.html", contexto)
     else:
         form = UserCommentPost(request.POST)
@@ -157,8 +148,6 @@ def ver_post(request):
             instance.save()
         return redirect("ver_post")
 
-
-
 @login_required
 def crear_post(request):
     if request.method == "GET":
@@ -172,7 +161,6 @@ def crear_post(request):
             instance.save()
 
         return redirect("ver_post")
-
 
 @login_required
 def edit_post(request):

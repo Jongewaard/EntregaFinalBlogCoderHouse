@@ -20,11 +20,11 @@
                     <a class="navbar-brand" href="{% url 'ver_post' %}">Posts</a>
                     {% if request.user.username %}
                     <a class="navbar-brand" href="{% url 'crear_post' %}">Crear</a>
-                    <a class="navbar-brand" href="{% url 'home' %}">Buscar</a>
+                    <a class="navbar-brand" href="{% url 'indx_msgs' %}">Mensajes</a>
                     {% endif %}
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav ms-auto">
-                            {% if request.user.username %} <!-- si está logueado, muestra el menu y para salir-->
+                            {% if request.user.username %} <!-- si está logueado, muestra el menu y para salir  mensajes-->
                             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Salir - {{request.user.username}}</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'editar_usuario' %}">Editar</a></li>
                             {% else %} <!-- sino, si no está logueado, muestra para ingresar-->
