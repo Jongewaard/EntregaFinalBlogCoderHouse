@@ -4,6 +4,8 @@ Entrega final, proyecto web con Django de tipo 'blog'
 ## Breve reseña
 Es una página web donde podrás registrarte, crear posteos y mensajearte con otros usuarios
 
+Pequeño link del funcionamiento del blog [aqui](https://youtu.be/d_WSWe2AF2w)
+
 ## Instalación
 Es un proyecto creado con Python y Django
 
