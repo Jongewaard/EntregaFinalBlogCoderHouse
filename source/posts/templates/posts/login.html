@@ -4,13 +4,14 @@
 <br><br><br>
 <br><br><br>
 
-{% if error%}
-<div style="text-align:center">
-    <br><p>{{error}}</p><br>
-</div>
-{% endif %}
+
 
 <form action="" method="POST" style="margin: auto; width: 440px;">
+    {% if error%}
+    <br>
+    <p>{{error}}</p>
+    <br>
+    {% endif %}
     {% csrf_token %}
     {{form.as_p}}
     <button type='submit' style='display:flex; justify-content:center;'>Iniciar Sesión</button>
@@ -20,6 +21,7 @@
 <br>
 <div style="text-align:center">
     <a href="{% url 'registrarse' %}" >registrarse</a>
+
 </div>
 <br>
 

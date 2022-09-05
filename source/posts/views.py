@@ -53,6 +53,9 @@ def register(request):
             username = form.cleaned_data['username']
             form.save()
             return render(request,"posts/index.html")#Usuario creado
+        form = UserCustomCreationForm()
+        return render(request,"posts/register.html", {"form":form,"error": "Error al crear usuario, verifique fortaleza de contraseña, un correo adecuado y un usuario válido"})#Error al crear usuario
+
     else:
         form = UserCustomCreationForm()
         return render(request, "posts/register.html", {"form":form} )
